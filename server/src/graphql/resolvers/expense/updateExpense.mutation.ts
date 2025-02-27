@@ -11,8 +11,7 @@ export class UpdateExpenseResolver {
     @Ctx() ctx: MyContext,
     @Arg("title", { nullable: true }) title?: string,
     @Arg("description", { nullable: true }) description?: string,
-    @Arg("start", { nullable: true }) start?: Date,
-    @Arg("end", { nullable: true }) end?: Date
+    @Arg("start", { nullable: true }) start?: Date
   ) {
     if (!ctx.userId) {
       throw new Error("Not authenticated");
@@ -31,15 +30,10 @@ export class UpdateExpenseResolver {
       throw new Error("You do not have permission to edit this expense");
     }
 
-    if (start && end && start > end) {
-      throw new Error("Start date cannot be later than end date.");
-    }
-
     const updatedExpenseData = {
       title: title ?? existingExpense.title,
       description: description ?? existingExpense.description,
       start: start ?? existingExpense.start,
-      end: end ?? existingExpense.end,
     };
 
     const updatedExpense = await prisma.expense.update({
