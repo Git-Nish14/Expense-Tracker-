@@ -1,21 +1,29 @@
-import Link from "next/link";
+"use client";
 
-export default function Page() {
+import { motion } from "framer-motion";
+import CallToAction from "@/components/UserUpdate";
+import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
+import Features from "@/components/Features";
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-6">Welcome</h1>
-      <div className="flex space-x-4">
-        <Link href="/login">
-          <button className="px-6 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-            Login
-          </button>
-        </Link>
-        <Link href="/signup">
-          <button className="px-6 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
-            Signup
-          </button>
-        </Link>
-      </div>
-    </div>
+    <motion.div
+      className="min-h-screen bg-gray-50 flex flex-col"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      {/* Hero Section */}
+      <Hero />
+
+      {/* Features Section */}
+      <Features />
+      {/* Call to Action Section */}
+      <CallToAction />
+
+      {/* Footer */}
+      <Footer />
+    </motion.div>
   );
 }
