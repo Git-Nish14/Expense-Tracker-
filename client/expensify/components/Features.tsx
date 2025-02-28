@@ -1,21 +1,19 @@
+"use client";
 import React from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
+import AnimationWrapper from "./AnimationWrapper";
 
 function Features() {
   return (
-    <div>
-      <motion.section
-        initial={{ opacity: 0, y: -50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="py-6 px-6 max-w-6xl mx-auto grid md:grid-cols-3 gap-12 overflow-hidden"
-      >
+    <div className="max-w-7xl mx-auto px-6 py-12">
+      {" "}
+      <section className="grid md:grid-cols-3 gap-12">
         {[
           {
             src: "/h1.webp",
             title: "Real-time Expense Tracking",
             text: "Log expenses instantly and stay updated.",
+            priority: true,
           },
           {
             src: "/h2.jpg",
@@ -28,26 +26,26 @@ function Features() {
             text: "Bank-level security ensures data safety.",
           },
         ].map((feature, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, x: -100 }} // Start from the left (-100px)
-            whileInView={{ opacity: 1, x: 0 }} // Move to its normal position
-            transition={{ duration: 0.6, delay: index * 0.2 }} // Delay each card
-            viewport={{ once: false, amount: 0.5 }}
-            className="text-center"
+            className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center transition-all duration-300 hover:shadow-xl"
           >
-            <Image
-              src={feature.src}
-              alt={feature.title}
-              width={200}
-              height={200}
-              className="mx-auto rounded-lg shadow-lg object-cover"
-            />
+            <div className="relative w-full h-[220px] md:h-[250px] mx-auto overflow-hidden rounded-lg">
+              <Image
+                src={feature.src}
+                alt={feature.title}
+                layout="fill"
+                objectFit="cover"
+                priority={feature.priority || false}
+                className="rounded-lg"
+              />
+            </div>
+
             <h3 className="text-2xl font-semibold mt-6">{feature.title}</h3>
             <p className="text-gray-600 mt-2 text-lg">{feature.text}</p>
-          </motion.div>
+          </div>
         ))}
-      </motion.section>
+      </section>
     </div>
   );
 }

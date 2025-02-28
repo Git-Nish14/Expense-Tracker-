@@ -10,7 +10,6 @@ import Link from "next/link";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-
 import personIcon from "@/public/person_icon.svg";
 import mailIcon from "@/public/mail_icon.svg";
 import lockIcon from "@/public/lock_icon.svg";

@@ -9,7 +9,6 @@ import Link from "next/link";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-
 import handWave from "@/public/hand_wave.png";
 import mailIcon from "@/public/mail_icon.svg";
 import lockIcon from "@/public/lock_icon.svg";
