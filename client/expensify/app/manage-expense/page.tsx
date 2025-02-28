@@ -7,18 +7,32 @@ interface Expense {
   title: string;
   amount: number;
   date: string;
+  category: string;
 }
 
 const ManageExpense: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([
-    { id: 1, title: "Grocery Shopping", amount: 80, date: "2025-02-25" },
-    { id: 2, title: "Electricity Bill", amount: 60, date: "2025-02-26" },
+    {
+      id: 1,
+      title: "Grocery Shopping",
+      amount: 80,
+      date: "2025-02-25",
+      category: "Grocery",
+    },
+    {
+      id: 2,
+      title: "Electricity Bill",
+      amount: 60,
+      date: "2025-02-26",
+      category: "Home",
+    },
   ]);
 
   const [newExpense, setNewExpense] = useState<Partial<Expense>>({
     title: "",
     amount: 0,
     date: "",
+    category: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +46,7 @@ const ManageExpense: React.FC = () => {
         title: newExpense.title as string,
         amount: Number(newExpense.amount),
         date: newExpense.date as string,
+        category: "",
       };
       setExpenses([...expenses, expense]);
       setNewExpense({ title: "", amount: 0, date: "" });

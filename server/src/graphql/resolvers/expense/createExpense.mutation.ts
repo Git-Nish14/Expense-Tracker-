@@ -11,6 +11,7 @@ export class CreateExpenseResolver {
     @Arg("description") description: string,
     @Arg("start") start: Date,
     @Arg("userId") userId: string,
+    @Arg("category") category: string,
     @Ctx() ctx: MyContext
   ) {
     if (!ctx.userId) {
