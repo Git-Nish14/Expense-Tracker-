@@ -1,7 +1,7 @@
 "use client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   PieChart,
   Pie,
@@ -24,15 +24,43 @@ interface UserStatesProps {
 }
 
 const UserStates: React.FC<UserStatesProps> = ({ data }) => {
-  // Example color palette
+  // Example color palette for Expense Distribution chart
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-  // Sort transactions by date (latest first)
-  const sortedData = [...data].sort(
+  // Filter states for month and year
+  const [filterMonth, setFilterMonth] = useState<string>("");
+  const [filterYear, setFilterYear] = useState<string>("");
+
+  // Local state for filtered data; initially show all data
+  const [filteredData, setFilteredData] = useState<DataEntry[]>(data);
+
+  // Update filteredData if data changes and no filter is applied
+  useEffect(() => {
+    if (!filterMonth && !filterYear) {
+      setFilteredData(data);
+    }
+  }, [data, filterMonth, filterYear]);
+
+  // Filter logic based on selected month and year
+  const handleSearch = () => {
+    const filtered = data.filter((entry) => {
+      const entryDate = new Date(entry.date);
+      const entryMonth = (entryDate.getMonth() + 1).toString().padStart(2, "0");
+      const entryYear = entryDate.getFullYear().toString();
+      return (
+        (filterMonth ? filterMonth === entryMonth : true) &&
+        (filterYear ? filterYear === entryYear : true)
+      );
+    });
+    setFilteredData(filtered);
+  };
+
+  // Sort the filtered data (latest first)
+  const sortedData = [...filteredData].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  // Calculate total income and expense
+  // Calculate totals from filtered data
   const totalIncome = sortedData
     .filter((entry) => entry.type === "Income")
     .reduce((sum, entry) => sum + entry.amount, 0);
@@ -40,7 +68,7 @@ const UserStates: React.FC<UserStatesProps> = ({ data }) => {
     .filter((entry) => entry.type === "Expense")
     .reduce((sum, entry) => sum + entry.amount, 0);
 
-  // Chart data for progress arc
+  // Chart data for the progress arc (Budget vs Expense)
   const progressData = [
     { name: "Expense", value: totalExpense, color: "#007bff" },
     { name: "Remaining", value: totalIncome - totalExpense, color: "#d3e3fc" },
@@ -53,11 +81,54 @@ const UserStates: React.FC<UserStatesProps> = ({ data }) => {
 
       {/* Main Content */}
       <main className="flex-grow flex flex-col items-center px-6 py-8">
+        <h2 className="text-2xl font-semibold mb-4 text-center">
+          Your Statistics
+        </h2>
+
+        {/* Filter Section */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-4 items-center justify-center">
+          <select
+            name="filterMonth"
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+            className="border rounded-lg p-3"
+          >
+            <option value="">All Months</option>
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select
+            name="filterYear"
+            value={filterYear}
+            onChange={(e) => setFilterYear(e.target.value)}
+            className="border rounded-lg p-3"
+          >
+            <option value="">All Years</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+          <button
+            onClick={handleSearch}
+            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            Search
+          </button>
+        </div>
+
         {/* Table Section */}
-        <div className="w-full max-w-6xl bg-white shadow-lg rounded-lg p-8">
-          <h2 className="text-2xl font-semibold mb-4 text-center">
-            Your Statistics
-          </h2>
+        <div className="w-full max-w-6xl bg-white shadow-lg rounded-lg p-8 mb-8">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-300">
               <thead>
@@ -70,12 +141,12 @@ const UserStates: React.FC<UserStatesProps> = ({ data }) => {
                 </tr>
               </thead>
               <tbody>
-                {sortedData.map((entry) => (
+                {sortedData.map((entry, index) => (
                   <tr
                     key={entry.id}
                     className="border border-gray-300 text-center"
                   >
-                    <td className="p-3">{entry.id}</td>
+                    <td className="p-3">{index + 1}</td>
                     <td className="p-3">{entry.title}</td>
                     <td className="p-3">${entry.amount}</td>
                     <td
@@ -90,14 +161,21 @@ const UserStates: React.FC<UserStatesProps> = ({ data }) => {
                     <td className="p-3">{entry.date}</td>
                   </tr>
                 ))}
+                {sortedData.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="p-3 text-center text-gray-500">
+                      No records found for the selected filter.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mt-8">
-          {/* Progress Arc Graph - Income vs Expense */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
+          {/* Progress Arc Graph - Budget vs Expense */}
           <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center">
             <h3 className="text-lg font-semibold text-center mb-4">
               Budget vs Expense
@@ -165,7 +243,7 @@ const UserStates: React.FC<UserStatesProps> = ({ data }) => {
   );
 };
 
-// Dummy data for demonstration (Dates in different order)
+// Dummy data for demonstration (dates in different order)
 const dummyUserStatesData: DataEntry[] = [
   { id: 1, title: "Grocery", amount: 80, type: "Expense", date: "2025-02-25" },
   { id: 2, title: "Salary", amount: 3000, type: "Income", date: "2025-02-28" },
