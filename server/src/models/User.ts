@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID, Float } from "type-graphql";
-import { Expense } from "./Expense";
+import { Transaction } from "./Transaction";
 
 @ObjectType()
 export class User {
@@ -15,12 +15,6 @@ export class User {
   @Field()
   email!: string;
 
-  @Field(() => Float)
-  budget!: number;
-
-  @Field(() => Float)
-  income!: number;
-
-  @Field(() => [Expense])
-  expenses: Expense[] = [];
+  @Field(() => [Transaction])
+  transactions: Transaction[] = [];
 }

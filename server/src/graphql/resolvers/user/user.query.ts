@@ -13,7 +13,7 @@ export default class UserResolver {
     const user = await prisma.user.findUnique({
       where: { id: ctx.userId },
       include: {
-        expenses: true, // Include expenses to match the expected return type
+        transactions: true, // Include expenses to match the expected return type
       },
     });
     if (!user) {

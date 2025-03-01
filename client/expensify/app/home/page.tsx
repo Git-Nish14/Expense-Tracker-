@@ -8,6 +8,7 @@ import RecentTransactions from "@/components/mainc/RecentTransactions";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import Loading from "../loading";
 
 const Home: React.FC = () => {
   const router = useRouter();
@@ -17,11 +18,21 @@ const Home: React.FC = () => {
   });
 
   if (loading)
-    return <p className="text-center text-gray-500">Loading transactions...</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loading />
+      </div>
+    );
+
   if (error)
-    return <p className="text-center text-red-500">Error: {error.message}</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500 text-lg">Error: {error.message}</p>
+      </div>
+    );
 
   const transactions = data?.transactions || [];
+
   const handleLogout = () => {
     Cookies.remove("token");
     router.push("/login");
@@ -32,7 +43,7 @@ const Home: React.FC = () => {
       <Header />
       <main className="flex-grow flex flex-col px-6 py-8">
         <div className="flex flex-col sm:flex-row sm:justify-between items-center w-full max-w-5xl mx-auto">
-          <WelcomeMessage />
+          <WelcomeMessage userName="Nish Patel" />
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-5 py-2 rounded-lg shadow-md hover:bg-red-600 transition duration-200 mt-4 sm:mt-0"

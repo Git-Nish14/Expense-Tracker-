@@ -4,18 +4,11 @@ import SignupResolver from "./resolvers/user/signup.mutation";
 import SigninResolver from "./resolvers/user/signin.mutation";
 import UserResolver from "./resolvers/user/user.query";
 import UsersResolver from "./resolvers/user/users.query";
-import { CreateExpenseResolver } from "./resolvers/expense/createExpense.mutation";
-import { UpdateExpenseResolver } from "./resolvers/expense/updateExpense.mutation";
-import { DeleteExpenseResolver } from "./resolvers/expense/deleteExpense.mutation";
-import { GetExpensesResolver } from "./resolvers/expense/getExpenses.query";
-import { DeleteExpensesResolver } from "./resolvers/expense/deleteExpenses.mutation";
-import { GetTransactionsResolver } from "./resolvers/expense/getTransations";
-import { CreateIncomeResolver } from "./resolvers/income/createIncome.mutation";
-import { DeleteIncomeResolver } from "./resolvers/income/deleteIncome.mutation";
-import { DeleteIncomesResolver } from "./resolvers/income/deleteIncomes.mutation";
-import { GetIncomesResolver } from "./resolvers/income/getIncome.query";
-import { UpdateIncomeResolver } from "./resolvers/income/updateIncome.mutation";
-
+import { CreateTransactionResolver } from "./resolvers/transactions/createTransaction.mutation";
+import { UpdateTransactionResolver } from "./resolvers/transactions/updateTransaction.mutation";
+import { DeleteTransactionResolver } from "./resolvers/transactions/deleteTransaction.mutation";
+import { GetTransactionsResolver } from "./resolvers/transactions/getTransactions.query";
+import { DeleteTransactionsResolver } from "./resolvers/transactions/deleteTransactions.mutation";
 export const createSchema = async () => {
   return await buildSchema({
     resolvers: [
@@ -23,17 +16,12 @@ export const createSchema = async () => {
       SigninResolver,
       UserResolver,
       UsersResolver,
-      CreateExpenseResolver,
-      UpdateExpenseResolver,
-      DeleteExpenseResolver,
-      DeleteExpensesResolver,
-      GetExpensesResolver,
+      CreateTransactionResolver,
+      UpdateTransactionResolver,
+      DeleteTransactionResolver,
+      DeleteTransactionsResolver,
       GetTransactionsResolver,
-      CreateIncomeResolver,
-      DeleteIncomeResolver,
-      DeleteIncomesResolver,
-      GetIncomesResolver,
-      UpdateIncomeResolver,
+      GetTransactionsResolver,
     ],
   });
 };

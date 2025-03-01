@@ -2,7 +2,7 @@ import { ObjectType, Field, ID, Float, GraphQLISODateTime } from "type-graphql";
 import { User } from "./User";
 
 @ObjectType()
-export class Income {
+export class Transaction {
   @Field(() => ID)
   id!: string;
 
@@ -18,6 +18,8 @@ export class Income {
   @Field(() => GraphQLISODateTime)
   date!: Date;
 
+  @Field()
+  isIncome!: boolean;
   @Field(() => User)
   user!: User;
 

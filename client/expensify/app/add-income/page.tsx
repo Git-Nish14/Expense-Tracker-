@@ -1,221 +1,234 @@
 "use client";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import React, { useState, useEffect } from "react";
+import Header from "@/components/Header";
+import React, { useState, useMemo } from "react";
+import { useQuery, useMutation } from "@apollo/client";
+import { GET_INCOMES } from "@/graphql/queries";
+import {
+  CREATE_INCOME,
+  UPDATE_INCOME,
+  DELETE_INCOME,
+} from "@/graphql/mutations";
 
 interface Income {
-  id: number;
+  id: string;
   title: string;
   amount: number;
   date: string;
+  category: string;
 }
 
-const AddIncome: React.FC = () => {
-  const [incomes, setIncomes] = useState<Income[]>([
-    {
-      id: 1,
-      title: "Salary",
-      amount: 3000,
-      date: "2025-02-28",
-    },
-  ]);
-
-  const [filteredIncomes, setFilteredIncomes] = useState<Income[]>(incomes);
-
+const ManageIncome: React.FC = () => {
   const [newIncome, setNewIncome] = useState<Partial<Income>>({
     title: "",
     amount: 0,
     date: "",
+    category: "",
   });
-
-  const [editId, setEditId] = useState<number | null>(null);
-
-  // Filter states for month and year
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [filterMonth, setFilterMonth] = useState<string>("");
   const [filterYear, setFilterYear] = useState<string>("");
 
-  // If no filter is applied, keep the filtered list up-to-date with incomes
-  useEffect(() => {
-    if (!filterMonth && !filterYear) {
-      setFilteredIncomes(incomes);
-    }
-  }, [incomes, filterMonth, filterYear]);
+  // Fetch incomes
+  const { loading, error, data, refetch } = useQuery(GET_INCOMES);
+  const incomes: Income[] = data?.getIncomes || [];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Mutations with refetch
+  const [createIncome] = useMutation(CREATE_INCOME, {
+    onCompleted: () => refetch(),
+  });
+  const [updateIncome] = useMutation(UPDATE_INCOME, {
+    onCompleted: () => refetch(),
+  });
+  const [deleteIncome] = useMutation(DELETE_INCOME, {
+    onCompleted: () => refetch(),
+  });
+
+  const filteredIncomes = useMemo(() => {
+    return incomes.filter((income) => {
+      const incomeDate = new Date(income.date);
+      const incMonth = (incomeDate.getMonth() + 1).toString().padStart(2, "0");
+      const incYear = incomeDate.getFullYear().toString();
+      return (
+        (filterMonth ? filterMonth === incMonth : true) &&
+        (filterYear ? filterYear === incYear : true)
+      );
+    });
+  }, [filterMonth, filterYear, incomes]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setNewIncome({ ...newIncome, [e.target.name]: e.target.value });
   };
 
-  const handleAddOrUpdateIncome = () => {
-    if (newIncome.title && newIncome.amount && newIncome.date) {
-      if (editId !== null) {
-        setIncomes((prev) =>
-          prev.map((inc) =>
-            inc.id === editId ? { ...inc, ...newIncome } : inc
-          )
-        );
-        setEditId(null);
-      } else {
-        const income: Income = {
-          id: incomes.length + 1,
-          title: newIncome.title as string,
-          amount: Number(newIncome.amount),
-          date: newIncome.date as string,
-        };
-        setIncomes([...incomes, income]);
-      }
-      setNewIncome({ title: "", amount: 0, date: "" });
+  const handleAddIncome = async () => {
+    if (
+      newIncome.title &&
+      newIncome.amount &&
+      newIncome.date &&
+      newIncome.category
+    ) {
+      await createIncome({
+        variables: {
+          title: newIncome.title,
+          amount: parseFloat(newIncome.amount as unknown as string),
+          date: new Date(newIncome.date as string).toISOString(),
+          category: newIncome.category,
+        },
+      });
+      setNewIncome({ title: "", amount: 0, date: "", category: "" });
     }
   };
 
-  const handleDeleteIncome = (id: number) => {
-    setIncomes(incomes.filter((income) => income.id !== id));
+  const handleEditIncome = (id: string) => {
+    const incomeToEdit = incomes.find((inc) => inc.id === id);
+    if (incomeToEdit) {
+      setNewIncome(incomeToEdit);
+      setEditingId(id);
+    }
   };
 
-  const handleEditIncome = (income: Income) => {
-    setNewIncome(income);
-    setEditId(income.id);
+  const handleUpdateIncome = async () => {
+    if (
+      editingId &&
+      newIncome.title &&
+      newIncome.amount &&
+      newIncome.date &&
+      newIncome.category
+    ) {
+      await updateIncome({
+        variables: {
+          id: editingId,
+          title: newIncome.title,
+          amount: parseFloat(newIncome.amount as unknown as string),
+          date: new Date(newIncome.date as string).toISOString(),
+          category: newIncome.category,
+        },
+      });
+      setNewIncome({ title: "", amount: 0, date: "", category: "" });
+      setEditingId(null);
+    }
   };
 
-  // Filter incomes based on selected month and year when Search is clicked
-  const handleSearch = () => {
-    const filtered = incomes.filter((income) => {
-      const incomeDate = new Date(income.date);
-      const month = (incomeDate.getMonth() + 1).toString().padStart(2, "0");
-      const year = incomeDate.getFullYear().toString();
-      return (
-        (filterMonth ? filterMonth === month : true) &&
-        (filterYear ? filterYear === year : true)
-      );
-    });
-    setFilteredIncomes(filtered);
+  const handleDeleteIncome = async (id: string) => {
+    await deleteIncome({ variables: { id } });
   };
-
-  // Compute statistics from filtered incomes
-  const totalIncome = filteredIncomes.reduce(
-    (sum, income) => sum + income.amount,
-    0
-  );
-  const totalEntries = filteredIncomes.length;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      {/* Sticky Header */}
-      <div className="top-0 z-50 bg-white shadow-md">
-        <Header />
-      </div>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center p-6">
-        <h2 className="text-3xl font-bold text-center mb-6">
+      <Header />
+      <div className="flex-1 w-full max-w-7xl mx-auto p-6">
+        <h2 className="text-3xl font-bold text-gray-700 mb-6 text-center">
           Income Dashboard
         </h2>
 
-        {/* Filter Section */}
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-6xl mb-6">
-          <select
-            name="filterMonth"
-            value={filterMonth}
-            onChange={(e) => setFilterMonth(e.target.value)}
-            className="border p-2 rounded w-full sm:w-auto"
-          >
-            <option value="">All Months</option>
-            <option value="01">January</option>
-            <option value="02">February</option>
-            <option value="03">March</option>
-            <option value="04">April</option>
-            <option value="05">May</option>
-            <option value="06">June</option>
-            <option value="07">July</option>
-            <option value="08">August</option>
-            <option value="09">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-          <select
-            name="filterYear"
-            value={filterYear}
-            onChange={(e) => setFilterYear(e.target.value)}
-            className="border p-2 rounded w-full sm:w-auto"
-          >
-            <option value="">All Years</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-          </select>
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <h3 className="text-lg font-medium text-gray-800 mb-4 text-center">
+            {editingId ? "Update Income" : "Add Income"}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="title"
+              placeholder="Title"
+              value={newIncome.title || ""}
+              onChange={handleInputChange}
+              className="border rounded-lg p-3 w-full"
+            />
+            <input
+              type="number"
+              name="amount"
+              placeholder="Amount"
+              value={newIncome.amount || ""}
+              onChange={handleInputChange}
+              className="border rounded-lg p-3 w-full"
+            />
+            <input
+              type="date"
+              name="date"
+              value={newIncome.date || ""}
+              onChange={handleInputChange}
+              className="border rounded-lg p-3 w-full"
+            />
+            <select
+              name="category"
+              value={newIncome.category || ""}
+              onChange={handleInputChange}
+              className="border rounded-lg p-3 w-full"
+            >
+              <option value="">Select Category</option>
+              <option value="Salary">Salary</option>
+              <option value="Business">Business</option>
+              <option value="Investments">Investments</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
           <button
-            onClick={handleSearch}
-            className="bg-green-600 text-white px-4 py-2 rounded w-full sm:w-auto"
+            onClick={editingId ? handleUpdateIncome : handleAddIncome}
+            className="mt-4 px-6 py-3 bg-gradient-to-r from-green-500 to-green-900 hover:bg-green-400 text-white rounded-lg transition w-full text-lg"
           >
-            Search
+            {editingId ? "Update Income" : "Add Income"}
           </button>
         </div>
 
-        {/* Statistics Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 w-full max-w-6xl">
-          <div className="bg-white p-4 rounded-lg shadow-md text-center">
-            <h3 className="text-lg font-semibold">Total Income</h3>
-            <p className="text-2xl text-green-600 font-bold">${totalIncome}</p>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow-md text-center">
-            <h3 className="text-lg font-semibold">Total Entries</h3>
-            <p className="text-2xl font-bold">{totalEntries}</p>
-          </div>
-        </div>
-
-        {/* Income List */}
-        <div className="w-full max-w-6xl bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
-          <h3 className="text-xl font-semibold mb-4">Income List</h3>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200 text-left">
-                <th className="p-2">#</th>
-                <th className="p-2">Title</th>
-                <th className="p-2">Amount</th>
-                <th className="p-2">Date</th>
-                <th className="p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredIncomes.length > 0 ? (
-                filteredIncomes.map((income, index) => (
-                  <tr key={income.id} className="border-t text-center">
-                    <td className="p-2">{index + 1}</td>
-                    <td className="p-2">{income.title}</td>
-                    <td className="p-2">${income.amount}</td>
-                    <td className="p-2">{income.date}</td>
-                    <td className="p-2 flex space-x-2 justify-center">
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p className="text-red-500">{error.message}</p>
+        ) : (
+          <div className="bg-white p-6 rounded-lg shadow-lg overflow-x-auto mt-6">
+            <h3 className="text-lg font-medium text-gray-800 mb-4 text-center">
+              Income List
+            </h3>
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700">
+                  <th className="p-3 border border-gray-300">#</th>
+                  <th className="p-3 border border-gray-300">Title</th>
+                  <th className="p-3 border border-gray-300">Amount</th>
+                  <th className="p-3 border border-gray-300">Category</th>
+                  <th className="p-3 border border-gray-300">Date</th>
+                  <th className="p-3 border border-gray-300">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredIncomes.map((income, index) => (
+                  <tr
+                    key={income.id}
+                    className="border border-gray-300 text-center"
+                  >
+                    <td className="p-3">{index + 1}</td>
+                    <td className="p-3">{income.title}</td>
+                    <td className="p-3">${income.amount}</td>
+                    <td className="p-3">{income.category}</td>
+                    <td className="p-3">
+                      {new Date(income.date).toLocaleDateString()}
+                    </td>
+                    <td className="p-3 flex justify-center gap-2">
                       <button
-                        onClick={() => handleEditIncome(income)}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded"
+                        onClick={() => handleEditIncome(income.id)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteIncome(income.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded"
+                        className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                       >
                         Delete
                       </button>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="p-2 text-center text-gray-500">
-                    No incomes found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </main>
-
-      {/* Sticky Footer */}
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
       <Footer />
     </div>
   );
 };
 
-export default AddIncome;
+export default ManageIncome;

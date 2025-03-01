@@ -5,6 +5,7 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_USER } from "@/graphql/queries";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import Loading from "../loading";
 
 interface Expense {
   id: string;
@@ -22,6 +23,13 @@ const UserStates: React.FC = () => {
 
   const { loading, error, data } = useQuery(GET_USER);
   const expenses: Expense[] = data?.user?.expenses || [];
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loading />
+      </div>
+    );
 
   const filteredData = useMemo(() => {
     if (!filterMonth && !filterYear) return expenses;

@@ -8,7 +8,7 @@ export default class UsersResolver {
   async users() {
     return prisma.user.findMany({
       include: {
-        expenses: true, // Ensure related expenses are included
+        transactions: true, // Ensure related expenses are included
       },
     });
   }

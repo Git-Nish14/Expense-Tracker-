@@ -161,11 +161,12 @@ const ManageExpense: React.FC = () => {
               <option value="Transport">Transport</option>
               <option value="Health">Health</option>
               <option value="Entertainment">Entertainment</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <button
             onClick={editingId ? handleUpdateExpense : handleAddExpense}
-            className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition w-full text-lg"
+            className="mt-4 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-900 hover:bg-indigo-400 text-white rounded-lg transition w-full text-lg"
           >
             {editingId ? "Update Expense" : "Add Expense"}
           </button>

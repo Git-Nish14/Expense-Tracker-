@@ -28,15 +28,13 @@ export const SIGNUP = gql`
 
 export const CREATE_EXPENSE = gql`
   mutation createExpense(
-    $userId: String!
     $title: String!
     $amount: Float!
     $category: String!
     $type: String!
-    $date: DateTimeISO!
+    $date: Date
   ) {
     createExpense(
-      userId: $userId
       title: $title
       amount: $amount
       category: $category
@@ -66,7 +64,7 @@ export const UPDATE_EXPENSE = gql`
     $amount: Float
     $category: String
     $type: String
-    $date: DateTimeISO
+    $date: Date
   ) {
     updateExpense(
       id: $id
