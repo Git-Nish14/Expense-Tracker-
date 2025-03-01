@@ -10,9 +10,7 @@ export class DeleteExpenseResolver {
       throw new Error("Not authenticated");
     }
 
-    const existingExpense = await prisma.expense.findUnique({
-      where: { id },
-    });
+    const existingExpense = await prisma.expense.findUnique({ where: { id } });
 
     if (!existingExpense) {
       throw new Error("Expense not found");
@@ -23,9 +21,6 @@ export class DeleteExpenseResolver {
     }
 
     await prisma.expense.delete({ where: { id } });
-
-    // Emit expense deletion to all connected clients
-    ctx.io.emit("deleteExpense", { id });
 
     return "Expense deleted";
   }

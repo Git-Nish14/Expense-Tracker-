@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, ID, Float } from "type-graphql";
 import { Expense } from "./Expense";
 
 @ObjectType()
@@ -15,12 +15,12 @@ export class User {
   @Field()
   email!: string;
 
-  @Field(() => [Expense], { nullable: true })
-  expenses?: Expense[];
-}
+  @Field(() => Float)
+  budget!: number; // Added Budget Field
 
-@ObjectType()
-export class Token {
-  @Field()
-  token!: string;
+  @Field(() => Float)
+  income!: number; // Added Income Field
+
+  @Field(() => [Expense])
+  expenses: Expense[] = [];
 }

@@ -8,17 +8,17 @@ export class CreateExpenseResolver {
   @Mutation(() => Expense)
   async createExpense(
     @Arg("title") title: string,
-    @Arg("description") description: string,
-    @Arg("start") start: Date,
-    @Arg("userId") userId: string,
+    @Arg("amount") amount: number,
     @Arg("category") category: string,
+    @Arg("type") type: string,
+    @Arg("date") date: Date,
+    @Arg("userId") userId: string,
     @Ctx() ctx: MyContext
   ) {
     if (!ctx.userId) {
       throw new Error("Not authenticated");
     }
 
-    // Ensure user exists before creating an expense
     const existingUser = await prisma.user.findUnique({
       where: { id: ctx.userId },
     });
@@ -27,21 +27,17 @@ export class CreateExpenseResolver {
       throw new Error("User not found");
     }
 
-    // Create the expense and include user details
     const expense = await prisma.expense.create({
       data: {
         title,
-        description,
-        start,
-        user: {
-          connect: { id: userId },
-        },
+        amount,
+        category,
+        type,
+        date,
+        user: { connect: { id: userId } },
       },
-      include: { user: true }, // Ensure user is fetched to avoid null error
+      include: { user: true },
     });
-
-    // Emit expense to all connected clients
-    ctx.io.emit("newExpense", expense);
 
     return expense;
   }

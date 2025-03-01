@@ -1,13 +1,24 @@
-import { Resolver, Mutation, Arg, Ctx } from "type-graphql";
+import { Resolver, Mutation, Ctx } from "type-graphql";
 import prisma from "../../../config/db";
+import { MyContext } from "../../../types/context";
 
 @Resolver()
 export class DeleteExpensesResolver {
   @Mutation(() => String)
-  async deleteExpenses() {
-    if (await prisma.expense.deleteMany()) {
-      return "Expenses deleted";
+  async deleteExpenses(@Ctx() ctx: MyContext) {
+    if (!ctx.userId) {
+      throw new Error("Not authenticated");
     }
-    throw new Error("Unable to delete expenses");
+
+    // Delete only expenses that belong to the authenticated user
+    const { count } = await prisma.expense.deleteMany({
+      where: { userId: ctx.userId },
+    });
+
+    if (count === 0) {
+      throw new Error("No expenses found to delete");
+    }
+
+    return `${count} expenses deleted`;
   }
 }

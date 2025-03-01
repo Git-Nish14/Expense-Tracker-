@@ -10,17 +10,16 @@ export class UpdateExpenseResolver {
     @Arg("id") id: string,
     @Ctx() ctx: MyContext,
     @Arg("title", { nullable: true }) title?: string,
-    @Arg("description", { nullable: true }) description?: string,
-    @Arg("start", { nullable: true }) start?: Date
+    @Arg("amount", { nullable: true }) amount?: number,
+    @Arg("category", { nullable: true }) category?: string,
+    @Arg("type", { nullable: true }) type?: string,
+    @Arg("date", { nullable: true }) date?: Date
   ) {
     if (!ctx.userId) {
       throw new Error("Not authenticated");
     }
 
-    const existingExpense = await prisma.expense.findUnique({
-      where: { id },
-      include: { user: true },
-    });
+    const existingExpense = await prisma.expense.findUnique({ where: { id } });
 
     if (!existingExpense) {
       throw new Error("Expense not found");
@@ -30,20 +29,16 @@ export class UpdateExpenseResolver {
       throw new Error("You do not have permission to edit this expense");
     }
 
-    const updatedExpenseData = {
-      title: title ?? existingExpense.title,
-      description: description ?? existingExpense.description,
-      start: start ?? existingExpense.start,
-    };
-
     const updatedExpense = await prisma.expense.update({
       where: { id },
-      data: updatedExpenseData,
-      include: { user: true },
+      data: {
+        title: title ?? existingExpense.title,
+        amount: amount ?? existingExpense.amount,
+        category: category ?? existingExpense.category,
+        type: type ?? existingExpense.type,
+        date: date ?? existingExpense.date,
+      },
     });
-
-    // Emit expense update to all connected clients
-    ctx.io.emit("updateExpense", updatedExpense);
 
     return updatedExpense;
   }

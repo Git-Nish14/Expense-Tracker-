@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID, GraphQLISODateTime } from "type-graphql";
+import { ObjectType, Field, ID, Float, GraphQLISODateTime } from "type-graphql";
 import { User } from "./User";
 
 @ObjectType()
@@ -9,11 +9,17 @@ export class Expense {
   @Field()
   title!: string;
 
-  @Field({ nullable: true })
-  description?: string;
+  @Field(() => Float)
+  amount!: number;
+
+  @Field()
+  category!: string; // Added Category Field
+
+  @Field()
+  type!: string;
 
   @Field(() => GraphQLISODateTime)
-  start!: Date;
+  date!: Date;
 
   @Field(() => User)
   user!: User;
