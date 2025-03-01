@@ -1,17 +1,16 @@
 import { Resolver, Mutation, Arg, Ctx } from "type-graphql";
-import { Expense } from "../../../models/Expense";
+import { Income } from "../../../models/Income";
 import prisma from "../../../config/db";
 import { MyContext } from "../../../types/context";
 
 @Resolver()
-export class CreateExpenseResolver {
-  @Mutation(() => Expense)
-  async createExpense(
+export class CreateIncomeResolver {
+  @Mutation(() => Income)
+  async createIncome(
     @Arg("title") title: string,
     @Arg("amount") amount: number,
     @Arg("category") category: string,
     @Arg("date") date: Date,
-    @Arg("type") type: string,
     @Arg("userId") userId: string,
     @Ctx() ctx: MyContext
   ) {
@@ -27,18 +26,17 @@ export class CreateExpenseResolver {
       throw new Error("User not found");
     }
 
-    const expense = await prisma.expense.create({
+    const income = await prisma.income.create({
       data: {
         title,
         amount,
         category,
         date,
-        type,
         user: { connect: { id: userId } },
       },
       include: { user: true },
     });
 
-    return expense;
+    return income;
   }
 }

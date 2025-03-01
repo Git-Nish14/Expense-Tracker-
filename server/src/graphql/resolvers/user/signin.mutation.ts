@@ -2,7 +2,7 @@ import { Resolver, Mutation, Arg } from "type-graphql";
 import prisma from "../../../config/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Token } from "../../../models/User";
+import { Token } from "../../../models/Token";
 
 @Resolver()
 export default class SigninResolver {

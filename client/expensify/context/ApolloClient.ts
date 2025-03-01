@@ -3,7 +3,8 @@ import { setContext } from "@apollo/client/link/context";
 import Cookies from "js-cookie";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri:
+    process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || "http://localhost:4000/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -16,7 +17,9 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-export const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-});
+export function initializeApollo() {
+  return new ApolloClient({
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache(),
+  });
+}

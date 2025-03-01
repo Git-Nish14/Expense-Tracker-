@@ -1,7 +1,6 @@
-import { Request } from "express"; // Import proper type for Socket.io
+import { Request } from "express";
 
 export interface MyContext {
-  // Use correct type for Socket.io
   req: Request;
-  userId?: string | null; // Make it optional to handle unauthenticated cases
+  userId?: string | null;
 }

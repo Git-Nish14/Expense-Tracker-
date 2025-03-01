@@ -10,20 +10,23 @@ dotenv.config();
 
 const startServer = async () => {
   try {
-    const app = express(); // Express instance
-    const httpServer = createServer(app); // HTTP server
-
+    const app = express();
+    const httpServer = createServer(app);
     const schema = await createSchema();
 
     const server = new ApolloServer({
       schema,
-      introspection: true, // Enable introspection
+      introspection: true,
       context: ({ req }) => {
         const authHeader = req.headers.authorization || "";
         let userId: string | null = null;
 
-        if (authHeader.startsWith("Bearer ")) {
-          const token = authHeader.split(" ")[1];
+        console.log("🔹 Received Authorization Header:", authHeader);
+
+        if (authHeader) {
+          const token = authHeader.startsWith("Bearer ")
+            ? authHeader.split(" ")[1]
+            : authHeader;
 
           try {
             if (!process.env.JWT_SECRET) {
@@ -32,12 +35,13 @@ const startServer = async () => {
 
             const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
             userId = (decodedToken as { userId: string }).userId;
+            console.log("✅ Decoded userId:", userId);
           } catch (err: any) {
-            console.error("JWT verification failed:", err.message);
+            console.error("❌ JWT verification failed:", err.message);
           }
         }
 
-        return { req, userId }; // Only `req` and `userId`, no socket.io
+        return { req, userId };
       },
     });
 
@@ -49,7 +53,7 @@ const startServer = async () => {
       console.log(`🚀 Server running on port ${port}`);
     });
   } catch (error) {
-    console.error("Error starting server:", error);
+    console.error("❌ Error starting server:", error);
   }
 };
 

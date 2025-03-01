@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_USER } from "@/graphql/queries";
 
 function getGreeting() {
   const now = new Date();
@@ -11,48 +13,43 @@ function getGreeting() {
 
 function getFormattedDate() {
   const now = new Date();
-  const day = now.getDate();
-  const monthName = now.toLocaleString("default", { month: "long" });
-  const year = now.getFullYear();
-  return `${monthName} ${day}, ${year}`;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(now);
 }
 
-interface WelcomeMessageProps {
-  userName: string;
-}
-
-const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ userName }) => {
-  const greeting = getGreeting();
-  const formattedDate = getFormattedDate();
-
+const WelcomeMessage: React.FC = () => {
+  const { data, loading, error } = useQuery(GET_USER);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    // Generate a random image URL after component mounts
     setImageSrc(
       `https://picsum.photos/100/100?random=${Math.floor(Math.random() * 1000)}`
     );
   }, []);
 
+  if (loading)
+    return <p className="text-center text-gray-500">Loading user details...</p>;
+  if (error)
+    return <p className="text-center text-red-500">Error: {error.message}</p>;
+
+  const user = data?.user;
+  const userName = user ? `${user.firstName} ${user.lastName}` : "User";
+
   return (
-    <div
-      style={{ display: "flex", alignItems: "center", marginBottom: "2rem" }}
-    >
+    <div className="flex items-center mb-6">
       {imageSrc && (
         <img
           src={imageSrc}
           alt="User Avatar"
-          style={{
-            borderRadius: "50%",
-            width: "80px",
-            height: "80px",
-            marginRight: "1rem",
-          }}
+          className="rounded-full w-20 h-20 mr-4"
         />
       )}
       <div>
-        <h2 style={{ margin: 0 }}>{`${greeting}, ${userName}!`}</h2>
-        <p style={{ margin: 0 }}>{formattedDate}</p>
+        <h2 className="text-lg font-semibold text-gray-800">{`${getGreeting()}, ${userName}!`}</h2>
+        <p className="text-gray-500">{getFormattedDate()}</p>
       </div>
     </div>
   );

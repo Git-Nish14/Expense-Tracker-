@@ -16,10 +16,10 @@ export class User {
   email!: string;
 
   @Field(() => Float)
-  budget!: number; // Added Budget Field
+  budget!: number;
 
   @Field(() => Float)
-  income!: number; // Added Income Field
+  income!: number;
 
   @Field(() => [Expense])
   expenses: Expense[] = [];

@@ -13,7 +13,7 @@ const Contact: React.FC<ContactProps> = ({}) => {
 
   const onSubmit = async (event: any) => {
     event.preventDefault();
-    setShowPopup(false); // Hide previous popup if any
+    setShowPopup(false);
     const formData = new FormData(event.target);
 
     formData.append("access_key", "7d57e162-925b-41cf-86a2-1d66b143f60e");
@@ -28,8 +28,6 @@ const Contact: React.FC<ContactProps> = ({}) => {
     if (data.success) {
       setShowPopup(true);
       event.target.reset();
-
-      // Hide the popup after 3 seconds
       setTimeout(() => setShowPopup(false), 3000);
     } else {
       console.log("Error", data);

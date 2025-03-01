@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const SIGNIN = gql`
-  mutation SIGNIN($password: String!, $email: String!) {
+  mutation signin($password: String!, $email: String!) {
     signin(password: $password, email: $email) {
       token
     }
@@ -9,7 +9,7 @@ export const SIGNIN = gql`
 `;
 
 export const SIGNUP = gql`
-  mutation Signup(
+  mutation signup(
     $firstName: String!
     $lastName: String!
     $email: String!
@@ -27,51 +27,121 @@ export const SIGNUP = gql`
 `;
 
 export const CREATE_EXPENSE = gql`
-  mutation CREATE_EXPENSE(
+  mutation createExpense(
     $userId: String!
-    $start: DateTimeISO!
-    $description: String!
     $title: String!
+    $amount: Float!
+    $category: String!
+    $type: String!
+    $date: DateTimeISO!
   ) {
     createExpense(
       userId: $userId
-      start: $start
-      description: $description
       title: $title
+      amount: $amount
+      category: $category
+      type: $type
+      date: $date
     ) {
       id
       title
-      description
-      start
+      amount
+      category
+      type
+      date
     }
   }
 `;
+
 export const DELETE_EXPENSE = gql`
-  mutation DELETE_EXPENSE($id: String!) {
+  mutation deleteExpense($id: String!) {
     deleteExpense(id: $id)
   }
 `;
 
 export const UPDATE_EXPENSE = gql`
-  mutation UPDATE_EXPENSE(
+  mutation updateExpense(
     $id: String!
     $title: String
-    $description: String
-    $start: DateTimeISO
-    $end: DateTimeISO
+    $amount: Float
+    $category: String
+    $type: String
+    $date: DateTimeISO
   ) {
     updateExpense(
       id: $id
-      description: $description
       title: $title
-      start: $start
-      end: $end
+      amount: $amount
+      category: $category
+      type: $type
+      date: $date
     ) {
       id
       title
-      description
-      start
-      end
+      amount
+      category
+      type
+      date
     }
+  }
+`;
+
+export const CREATE_INCOME = gql`
+  mutation createIncome(
+    $userId: String!
+    $title: String!
+    $amount: Float!
+    $category: String!
+    $date: DateTimeISO!
+  ) {
+    createIncome(
+      userId: $userId
+      title: $title
+      amount: $amount
+      category: $category
+      date: $date
+    ) {
+      id
+      title
+      amount
+      category
+      date
+    }
+  }
+`;
+
+export const DELETE_INCOME = gql`
+  mutation deleteIncome($id: String!) {
+    deleteIncome(id: $id)
+  }
+`;
+
+export const UPDATE_INCOME = gql`
+  mutation updateIncome(
+    $id: String!
+    $title: String
+    $amount: Float
+    $category: String
+    $date: DateTimeISO
+  ) {
+    updateIncome(
+      id: $id
+      title: $title
+      amount: $amount
+      category: $category
+      date: $date
+    ) {
+      id
+      title
+      amount
+      category
+      date
+    }
+  }
+`;
+
+export const DELETE_ALL_INCOME = gql`
+  mutation deleteIncomes {
+    deleteIncomes
   }
 `;

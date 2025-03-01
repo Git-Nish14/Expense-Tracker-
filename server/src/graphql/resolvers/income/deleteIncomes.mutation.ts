@@ -3,21 +3,22 @@ import prisma from "../../../config/db";
 import { MyContext } from "../../../types/context";
 
 @Resolver()
-export class DeleteExpensesResolver {
+export class DeleteIncomesResolver {
   @Mutation(() => String)
-  async deleteExpenses(@Ctx() ctx: MyContext) {
+  async deleteIncomes(@Ctx() ctx: MyContext) {
     if (!ctx.userId) {
       throw new Error("Not authenticated");
     }
 
-    const { count } = await prisma.expense.deleteMany({
+    // Delete only incomes that belong to the authenticated user
+    const { count } = await prisma.income.deleteMany({
       where: { userId: ctx.userId },
     });
 
     if (count === 0) {
-      throw new Error("No expenses found to delete");
+      throw new Error("No incomes found to delete");
     }
 
-    return `${count} expenses deleted`;
+    return `${count} incomes deleted`;
   }
 }
