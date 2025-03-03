@@ -6,7 +6,6 @@
     "dev": "nodemon src/index.ts",
     "db:push": "prisma db push"
   },
-
   "dependencies": {
     "@prisma/client": "^6.4.1",
     "apollo-server-express": "^3.13.0",
@@ -25,6 +24,7 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.5",
+    "prisma": "^6.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
