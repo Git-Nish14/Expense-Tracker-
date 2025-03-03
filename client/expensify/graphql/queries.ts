@@ -10,3 +10,16 @@ export const GET_USER = gql`
     }
   }
 `;
+
+export const GET_TRANSACTIONS = gql`
+  query GetTransactions($skip: Int, $take: Int) {
+    getTransactions(skip: $skip, take: $take) {
+      id
+      title
+      amount
+      category
+      date
+      isIncome
+    }
+  }
+`;

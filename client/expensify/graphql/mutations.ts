@@ -26,120 +26,66 @@ export const SIGNUP = gql`
   }
 `;
 
-export const CREATE_EXPENSE = gql`
-  mutation createExpense(
+export const CREATE_TRANSACTION = gql`
+  mutation CreateTransaction(
     $title: String!
     $amount: Float!
     $category: String!
-    $type: String!
-    $date: Date
+    $date: String!
+    $isIncome: Boolean!
   ) {
-    createExpense(
+    createTransaction(
       title: $title
       amount: $amount
       category: $category
-      type: $type
       date: $date
+      isIncome: $isIncome
     ) {
       id
       title
       amount
       category
-      type
       date
+      isIncome
     }
   }
 `;
 
-export const DELETE_EXPENSE = gql`
-  mutation deleteExpense($id: String!) {
-    deleteExpense(id: $id)
-  }
-`;
-
-export const UPDATE_EXPENSE = gql`
-  mutation updateExpense(
+export const UPDATE_TRANSACTION = gql`
+  mutation UpdateTransaction(
     $id: String!
     $title: String
     $amount: Float
     $category: String
-    $type: String
-    $date: Date
+    $date: String
+    $isIncome: Boolean
   ) {
-    updateExpense(
-      id: $id
-      title: $title
-      amount: $amount
-      category: $category
-      type: $type
-      date: $date
-    ) {
-      id
-      title
-      amount
-      category
-      type
-      date
-    }
-  }
-`;
-
-export const CREATE_INCOME = gql`
-  mutation createIncome(
-    $userId: String!
-    $title: String!
-    $amount: Float!
-    $category: String!
-    $date: DateTimeISO!
-  ) {
-    createIncome(
-      userId: $userId
-      title: $title
-      amount: $amount
-      category: $category
-      date: $date
-    ) {
-      id
-      title
-      amount
-      category
-      date
-    }
-  }
-`;
-
-export const DELETE_INCOME = gql`
-  mutation deleteIncome($id: String!) {
-    deleteIncome(id: $id)
-  }
-`;
-
-export const UPDATE_INCOME = gql`
-  mutation updateIncome(
-    $id: String!
-    $title: String
-    $amount: Float
-    $category: String
-    $date: DateTimeISO
-  ) {
-    updateIncome(
+    updateTransaction(
       id: $id
       title: $title
       amount: $amount
       category: $category
       date: $date
+      isIncome: $isIncome
     ) {
       id
       title
       amount
       category
       date
+      isIncome
     }
   }
 `;
 
-export const DELETE_ALL_INCOME = gql`
-  mutation deleteIncomes {
-    deleteIncomes
+export const DELETE_TRANSACTION = gql`
+  mutation DeleteTransaction($id: String!) {
+    deleteTransaction(id: $id)
+  }
+`;
+
+export const DELETE_TRANSACTIONS = gql`
+  mutation DeleteTransactions {
+    deleteTransactions
   }
 `;

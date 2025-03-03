@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_USER } from "@/graphql/queries";
 
 function getGreeting() {
   const now = new Date();
@@ -17,22 +19,25 @@ function getFormattedDate() {
   return `${monthName} ${day}, ${year}`;
 }
 
-interface WelcomeMessageProps {
-  userName: string;
-}
-
-const WelcomeMessage: React.FC<WelcomeMessageProps> = ({ userName }) => {
-  const greeting = getGreeting();
-  const formattedDate = getFormattedDate();
-
+const WelcomeMessage: React.FC = () => {
+  const { data, loading, error } = useQuery(GET_USER);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    // Generate a random image URL after component mounts
     setImageSrc(
       `https://picsum.photos/100/100?random=${Math.floor(Math.random() * 1000)}`
     );
   }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading user information</p>;
+
+  const firstName = data?.user?.firstName || "User";
+  const lastName = data?.user?.lastName || "";
+  const userName = `${firstName} ${lastName}`;
+
+  const greeting = getGreeting();
+  const formattedDate = getFormattedDate();
 
   return (
     <div

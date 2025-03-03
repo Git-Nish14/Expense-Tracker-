@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useQuery } from "@apollo/client";
-import { GET_RECENT_TRANSACTIONS } from "@/graphql/queries";
+import { GET_TRANSACTIONS } from "@/graphql/queries";
 import Header from "@/components/Header";
 import WelcomeMessage from "@/components/mainc/WelcomeMessage";
 import RecentTransactions from "@/components/mainc/RecentTransactions";
@@ -13,7 +13,7 @@ import Loading from "../loading";
 const Home: React.FC = () => {
   const router = useRouter();
 
-  const { data, loading, error } = useQuery(GET_RECENT_TRANSACTIONS, {
+  const { data, loading, error } = useQuery(GET_TRANSACTIONS, {
     variables: { skip: 0, take: 10 },
   });
 
@@ -31,7 +31,11 @@ const Home: React.FC = () => {
       </div>
     );
 
-  const transactions = data?.transactions || [];
+  const transactions =
+    data?.getTransactions?.map((t: any) => ({
+      ...t,
+      type: t.isIncome ? "income" : "expense",
+    })) || [];
 
   const handleLogout = () => {
     Cookies.remove("token");
@@ -43,7 +47,7 @@ const Home: React.FC = () => {
       <Header />
       <main className="flex-grow flex flex-col px-6 py-8">
         <div className="flex flex-col sm:flex-row sm:justify-between items-center w-full max-w-5xl mx-auto">
-          <WelcomeMessage userName="Nish Patel" />
+          <WelcomeMessage />
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-5 py-2 rounded-lg shadow-md hover:bg-red-600 transition duration-200 mt-4 sm:mt-0"
