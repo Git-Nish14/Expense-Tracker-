@@ -7,7 +7,7 @@ export function middleware(req: NextRequest) {
 
   // Redirect unauthenticated users away from protected pages
   if (!token && pathname.startsWith("/home")) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Prevent already authenticated users from accessing auth pages

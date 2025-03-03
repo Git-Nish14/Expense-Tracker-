@@ -14,7 +14,7 @@ export default function Hero() {
         Track expenses, budget better, and achieve financial freedom
         effortlessly.
       </p>
-      <Link href="/signup">
+      <Link href="/login">
         <Button className="mt-6 font-semibold px-8 py-4 rounded-lg text-lg">
           Get Started for Free
         </Button>
