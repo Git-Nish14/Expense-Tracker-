@@ -20,7 +20,9 @@ function getFormattedDate() {
 }
 
 const WelcomeMessage: React.FC = () => {
-  const { data, loading, error } = useQuery(GET_USER);
+  const { data, loading, error, refetch } = useQuery(GET_USER, {
+    fetchPolicy: "cache-and-network",
+  });
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {

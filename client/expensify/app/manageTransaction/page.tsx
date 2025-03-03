@@ -33,6 +33,7 @@ const ManageTransactions: React.FC = () => {
   const [filterYear, setFilterYear] = useState<string>("");
   const { loading, error, data, refetch } = useQuery(GET_TRANSACTIONS, {
     variables: { skip: 0, take: 50 },
+    fetchPolicy: "network-only",
   });
   const transactions: Transaction[] = data?.getTransactions || [];
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {

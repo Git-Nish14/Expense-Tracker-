@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Arg, Ctx } from "type-graphql";
 import prisma from "../../../config/db";
-import { Transaction } from "../../../models/Transaction"; // ✅ Import the correct model
+import { Transaction } from "../../../models/Transaction";
 import { MyContext } from "../../../types/context";
 
 @Resolver()
@@ -12,14 +12,12 @@ export class UpdateTransactionResolver {
     @Arg("title", { nullable: true }) title?: string,
     @Arg("amount", { nullable: true }) amount?: number,
     @Arg("category", { nullable: true }) category?: string,
-    @Arg("isIncome", { nullable: true }) isIncome?: boolean, // ✅ Updated from 'type'
-    @Arg("date", { nullable: true }) date?: string // ✅ Keeping date as string for consistency
+    @Arg("isIncome", { nullable: true }) isIncome?: boolean,
+    @Arg("date", { nullable: true }) date?: string
   ) {
     if (!ctx.userId) {
       throw new Error("❌ Not authenticated");
     }
-
-    // ✅ Find the existing transaction
     const existingTransaction = await prisma.transactions.findUnique({
       where: { id },
     });
@@ -27,18 +25,12 @@ export class UpdateTransactionResolver {
     if (!existingTransaction) {
       throw new Error("❌ Transaction not found");
     }
-
-    // ✅ Ensure only the owner can update their transaction
     if (existingTransaction.userId !== ctx.userId) {
       throw new Error("❌ You do not have permission to edit this transaction");
     }
-
-    // ✅ Convert date to ISO format if provided
     const formattedDate = date
       ? new Date(date).toISOString()
       : existingTransaction.date.toISOString();
-
-    // ✅ Update transaction
     const updatedTransaction = await prisma.transactions.update({
       where: { id },
       data: {

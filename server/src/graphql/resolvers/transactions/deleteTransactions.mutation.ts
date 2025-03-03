@@ -9,8 +9,6 @@ export class DeleteTransactionsResolver {
     if (!ctx.userId) {
       throw new Error("❌ Not authenticated");
     }
-
-    // ✅ Delete all transactions associated with the user
     const { count } = await prisma.transactions.deleteMany({
       where: { userId: ctx.userId },
     });

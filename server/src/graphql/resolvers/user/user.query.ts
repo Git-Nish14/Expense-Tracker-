@@ -13,7 +13,7 @@ export default class UserResolver {
     const user = await prisma.user.findUnique({
       where: { id: ctx.userId },
       include: {
-        transactions: true, // Include expenses to match the expected return type
+        transactions: true,
       },
     });
     if (!user) {
@@ -22,5 +22,3 @@ export default class UserResolver {
     return user;
   }
 }
-
-//om this code is hacked

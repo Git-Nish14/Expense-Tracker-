@@ -1,6 +1,6 @@
 import { Resolver, Query, Ctx, Arg, Int } from "type-graphql";
 import prisma from "../../../config/db";
-import { Transaction } from "../../../models/Transaction"; // ✅ Import the correct model
+import { Transaction } from "../../../models/Transaction";
 import { MyContext } from "../../../types/context";
 
 @Resolver()
@@ -17,7 +17,7 @@ export class GetTransactionsResolver {
 
     return await prisma.transactions.findMany({
       where: { userId: ctx.userId },
-      orderBy: { date: "desc" }, // ✅ Order transactions by most recent
+      orderBy: { date: "desc" },
       skip,
       take,
     });
