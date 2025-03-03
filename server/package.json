@@ -1,10 +1,11 @@
 {
   "scripts": {
-    "start": "node build/index.ts",
-    "build": "tsc && prisma generate",
+    "start": "node build/index.js",
+    "build": "prisma generate && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
