@@ -16,7 +16,7 @@ export default function ApolloProviderWrapper({
   children: React.ReactNode;
 }) {
   const httpLink = createHttpLink({
-    uri: "http://localhost:4000/graphql",
+    uri: "https://expenseback-qsg9j6nkp-nish-patel.vercel.app/graphql",
   });
 
   const authLink = setContext((_, { headers }) => {

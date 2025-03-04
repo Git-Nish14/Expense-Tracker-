@@ -69,7 +69,9 @@ const UserStats: React.FC = () => {
   const [pieExpenseMonth, setPieExpenseMonth] = useState<string>("");
   const [pieExpenseYear, setPieExpenseYear] = useState<string>("");
   const [lineYear, setLineYear] = useState<string>("");
-  const { data, loading, error } = useQuery(GET_TRANSACTIONS);
+  const { data, loading, error } = useQuery(GET_TRANSACTIONS, {
+    fetchPolicy: "network-only",
+  });
   const transactions: Transaction[] = data?.getTransactions || [];
   const barFiltered = useMemo(() => {
     return transactions.filter((t) => {

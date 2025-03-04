@@ -20,7 +20,7 @@ function CallToAction() {
     {
       name: "John D.",
       text: "I love the financial insights! The real-time tracking keeps me on top of my budget.",
-      img: "/john.jpg",
+      img: "/lallu.jpg",
     },
     {
       name: "Sophia W.",
